@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make A Marksheet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arya:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        #imgPreview {
+            display: none;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-top: 10px;
+        }
+        .headline {
+            color: red;
+        }
+        .Main {
+            text-align: center;
+        }
+        .marks h5 {
+            text-align: center;
+        }
+        .motherN, .seat {
+            float: right;
+        }
+        thead {
+            text-align: center;
+        }
+        .uname {
+            text-align: center;
+            font-family: "Arya", sans-serif;
+            font-weight: 700;
+            font-style: normal;
+        }
+        .navbar {
+            display: flex;
+            flex-wrap: nowrap;
+        }
+    </style>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h2 class="mt-4">Make A Marksheet</h2>
+        <form class="mt-4" id="marksheetForm">
+            <!-- Form Fields -->
+            <div class="mb-3">
+                <label for="fname" class="form-label">First Name</label>
+                <input type="text" name="fname" id="fname" class="form-control" placeholder="First name" required>
+            </div>
+            <div class="mb-3">
+                <label for="mname" class="form-label">Middle Name</label>
+                <input type="text" name="mname" id="mname" class="form-control" placeholder="Middle name" required>
+            </div>
+            <div class="mb-3">
+                <label for="lname" class="form-label">Last Name</label>
+                <input type="text" name="lname" id="lname" class="form-control" placeholder="Last name" required>
+            </div>
+            <div class="mb-3">
+                <label for="mother_name" class="form-label">Mother's Name</label>
+                <input type="text" name="mother_name" id="mother_name" class="form-control" placeholder="Mother name" required>
+            </div>
+            <div class="mb-3">
+                <label for="class" class="form-label">Select class</label>
+                <select name="class" id="class" class="form-select" required>
+                    <option value="fy">First Year</option>
+                    <option value="sy">Second Year</option>
+                    <option value="ty">Third Year</option>
+                    <option value="ty">Fourth Year</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="sem" class="form-label">Select Semister</label>
+                <select name="sem" id="sem" class="form-select" required>
+                    <option value="1">First</option>
+                    <option value="2">Second</option>
+                    <option value="3">Third</option>
+                    <option value="4">Fourth</option>
+                    <option value="5">Fifth</option>
+                    <option value="6">Sixth</option>
+                    <option value="7">Seventh</option>
+                    <option value="8">Eight</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="roll" class="form-label">Roll Number</label>
+                <input type="text" name="roll" id="roll" class="form-control" placeholder="Roll Number" required>
+            </div>
+            <div class="mb-3">
+                <label for="seat" class="form-label">Seat Number</label>
+                <input type="text" name="seat" id="seat" class="form-control" placeholder="Seat Number" required>
+            </div>
+            <div class="mb-3">
+                <label for="depart" class="form-label">Select Department</label>
+                <select name="depart" id="depart" class="form-select" required>
+                    <option value="Computer Engineering">Computer Engineering</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exam_month" class="form-label">Exam Month</label>
+                <select name="exam_month" id="exam_month" class="form-select" required>
+                    <option value="November">November</option>
+                    <option value="May">May</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exam_year" class="form-label">Exam Year</label>
+                <input type="number" name="exam_year" id="exam_year" class="form-control" min="2000" max="2100" step="1" placeholder="e.g., 2023" required>
+            </div>
+            <div class="mb-3">
+
+                <label for="profileImage" class="form-label">Profile Image</label>
+                <input type="file" name="profileImage" id="profileImage" class="form-control" accept="image/*" required>
+                <img id="imgPreview" src="#" alt="Profile Image Preview">
+                <small id="fileSizeError" class="text-danger" style="display:none;">File size exceeds 100KB. Please choose a smaller file.</small>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2 class="mt-4">Enter Subjects and Marks</h2>
+        <form class="mt-4" id="subjectsForm">
+            <div id="subjectsContainer">
+                <div class="subject-group mb-3">
+                    <label class="form-label">Subject 1</label>
+                    <input type="text" name="subject[]" class="form-control mb-2" placeholder="Subject Name" required>
+                    <input type="number" name="marks[]" class="form-control" placeholder="Marks" required>
+                    <input type="number" name="maxMarks[]" class="form-control mt-2" placeholder="Max Marks" required>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" id="addSubjectBtn">Add Another Subject</button>
+            <button type="submit" class="btn btn-primary btn-on">Generate Marksheet</button>
+            <button type="button" class="btn btn-primary" id="generatePDFBtn">Download PDF</button>
+
+        </form>
+    </div>
+
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultModalLabel">Marksheet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <nav class="navbar bg-body-tertiary">
+                            <div class="container-fluid">
+                              <p style="width: 15%;"><img style="width: 100%;" src="./image/LOGO.png" alt=""></p>
+                              <p class="fs-4 uname">University Of Mumbai <br> मुंबई विद्यापीठ</p>
+                              <p style="width: 15%;"><img id="profileimg" style="width: 100%;"></p>
+                            </div>
+                          </nav>
+                          <div class="section Main">
+                            <p>STATEMENT OF MARK FOR <span id="modalExamYear">First Year</span> Examination <span id="modalExamMonth">May 2020</span> Semister <span id="modalSem">First</span></p>
+                            <p>Department : <span id="modalDepart">Computer Engineering</span></p> 
+                          </div>
+                          <div class="section info">
+                            <p>
+                                <p>
+                                    <span>NAME : <span id="modalFname">Vedant</span></span>
+                                    <span><span id="modalMname">Bhauso</span></span>
+                                    <span><span id="modalLname">Potdar</span></span>
+                                    <span class="motherN">MOTHER : <span id="modalMotherName">Gayatri</span></span>
+                                </p>
+                                <p>
+                                    <span>Roll : <span id="modalRoll">32</span></span>
+                                    <span class="seat">Seat No. :<span id="modalSeat">6565</span></span>
+                                </p>
+                            </p>
+                          </div>
+                          <table class="table table-bordered border-dark">
+                            <thead>
+                                <tr>
+                                    <th>SR. NO</th>
+                                    <th>Subjects</th>
+                                    <th>Max. Marks</th>
+                                    <th>Marks Obtained</th>
+                                    <th>Marks in Word</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalSubjects">
+                                <!-- Subject rows will be inserted here -->
+                            </tbody>
+                          </table>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script>
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('subjectsForm');
+            const addSubjectBtn = document.getElementById('addSubjectBtn');
+            const subjectsContainer = document.getElementById('subjectsContainer');
+            const marksheetForm = document.getElementById('marksheetForm');
+            const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+
+            addSubjectBtn.addEventListener('click', () => {
+                const subjectGroup = document.createElement('div');
+                subjectGroup.classList.add('subject-group', 'mb-3');
+                subjectGroup.innerHTML = `
+                    <label class="form-label">Subject ${subjectsContainer.children.length + 1}</label>
+                    <input type="text" name="subject[]" class="form-control mb-2" placeholder="Subject Name" required>
+                    <input type="number" name="marks[]" class="form-control" placeholder="Marks" required>
+                    <input type="number" name="maxMarks[]" class="form-control mt-2" placeholder="Max Marks" required>
+                `;
+                subjectsContainer.appendChild(subjectGroup);
+            });
+
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const modalFname = document.getElementById('modalFname');
+                const modalMname = document.getElementById('modalMname');
+                const modalLname = document.getElementById('modalLname');
+                const modalMotherName = document.getElementById('modalMotherName');
+                const modalRoll = document.getElementById('modalRoll');
+                const modalSeat = document.getElementById('modalSeat');
+                const modalDepart = document.getElementById('modalDepart');
+                const modalExamYear = document.getElementById('modalExamYear');
+                const modalExamMonth = document.getElementById('modalExamMonth');
+                const modalSem = document.getElementById('modalSem');
+                const modalSubjects = document.getElementById('modalSubjects');
+            
+                const fname = document.getElementById('fname').value;
+                const mname = document.getElementById('mname').value;
+                const lname = document.getElementById('lname').value;
+                const motherName = document.getElementById('mother_name').value;
+                const roll = document.getElementById('roll').value;
+                const seat = document.getElementById('seat').value;
+                const depart = document.getElementById('depart').value;
+                const examYear = document.getElementById('exam_year').value;
+                const examMonth = document.getElementById('exam_month').value;
+                const sem = document.getElementById('sem').value;
+                const proimg = document.getElementById('profileimg').value;
+
+                console.log(proimg);
+                console.log(proimg);
+                console.log(proimg);
+                console.log(proimg);
+
+                modalFname.textContent = fname;
+                modalMname.textContent = mname;
+                modalLname.textContent = lname;
+                modalMotherName.textContent = motherName;
+                modalRoll.textContent = roll;
+                modalSeat.textContent = seat;
+                modalDepart.textContent = depart;
+                modalExamYear.textContent = examYear;
+                modalExamMonth.textContent = examMonth;
+                modalSem.textContent = sem;
+
+                modalSubjects.innerHTML = '';
+
+                const subjects = document.querySelectorAll('[name="subject[]"]');
+                const marks = document.querySelectorAll('[name="marks[]"]');
+                const maxMarks = document.querySelectorAll('[name="maxMarks[]"]');
+
+
+
+                
+                
+                let totalMarks = 0;
+                let totalMarkobt = 0;
+                let per = 0;
+                let flag_fail =0;
+                let result;
+                for (let i = 0; i < subjects.length; i++) {
+                    let submarks=0;
+                    let star="";
+                    submarks = parseInt(marks[i].value)
+                    if (submarks<32) {
+                        flag_fail++;
+                        star="*";
+                    }
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${i + 1}</td>
+                        <td>${subjects[i].value}</td>
+                        <td>${maxMarks[i].value}</td>
+                        <td>${marks[i].value}${star}</td>
+                        <td>${numberToWords(parseInt(marks[i].value))}</td>
+                    `;
+                    modalSubjects.appendChild(row);
+           
+                    totalMarkobt += parseInt(marks[i].value, 10);
+                    totalMarks += parseInt(maxMarks[i].value, 10);
+
+                    per=(totalMarkobt*100)/totalMarks;
+                    per = per.toFixed(2);
+                }
+                if(flag_fail>0){
+                    result="fail"
+                }
+                else{
+                    result="pass"
+                }
+                
+
+                const lastrow= document.createElement('tr');
+                lastrow.innerHTML = `
+                        <td class="fw-bolder">${result}</td>
+                        <td class="fw-bolder">${per}%</td>
+                        <td class="fw-bolder">${totalMarks}</td>
+                        <td class="fw-bolder">${totalMarkobt}</td>
+                        <td class="fw-bolder">${numberToWords(totalMarkobt)}</td>
+                    `;
+                    modalSubjects.appendChild(lastrow);
+
+                resultModal.show();
+            });
+
+
+            document.getElementById('profileImage').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            var fileSizeError = document.getElementById('fileSizeError');
+            var imgPreview = document.getElementById('imgPreview');
+
+            if (file.size > 2 * 1024 * 1024) {
+                fileSizeError.style.display = 'block';
+                event.target.value = '';
+                imgPreview.style.display = 'none';
+                return;
+            } else {
+                fileSizeError.style.display = 'none';
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                imgPreview.src = e.target.result;
+                imgPreview.style.display = 'block';
+                document.getElementById('profileimg').src = e.target.result; // Setting image in modal
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+            const numberToWords = (num) => {
+                const singleDigits = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"];
+                const doubleDigits = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+                const tensMultiple = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+                const placeValue = ["Hundred", "Thousand", "Million", "Billion"];
+
+                if (num === 0) return "Zero";
+
+                let result = "";
+
+                if (Math.floor(num / 100) > 0) {
+                    result += singleDigits[Math.floor(num / 100)] + " " + placeValue[0] + " ";
+                    num %= 100;
+                }
+
+                if (num > 0) {
+                    if (num < 10) result += singleDigits[num];
+                    else if (num < 20) result += doubleDigits[num - 10];
+                    else {
+                        result += tensMultiple[Math.floor(num / 10)];
+                        if (num % 10 > 0) result += " " + singleDigits[num % 10];
+                    }
+                }
+
+                return result.trim();
+            };
+
+
+            const generatePDF = () => {
+            const doc = new jsPDF();
+
+        // Define content to be added to PDF
+            const content = document.getElementById('resultModal').innerHTML;
+
+        // Add content to PDF
+            doc.html(content, {
+            callback: function (doc) {
+                doc.save('marksheet.pdf');
+            },
+            x: 10,
+            y: 10
+            });
+        };
+        document.getElementById('generatePDFBtn').addEventListener('click', generatePDF);
+           
+        });
+    </script>
+
+</body>
+</html>
